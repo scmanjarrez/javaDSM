@@ -13,23 +13,35 @@ public class DSMCerrojo {
 	final String puerto;
 	boolean exclusive;
 	ArrayList<ObjetoCompartido> obj;
-	Cerrojo lock;
-	FabricaCerrojos fab_cerr;
-	Almacen alm;
+	private Cerrojo lock;
+	private FabricaCerrojos fab_cerr;
+	private Almacen alm;
+	private String nom;
+	
 	public DSMCerrojo (String nom) throws RemoteException, MalformedURLException, NotBoundException {
 		servidor = System.getenv("SERVIDOR");
 		puerto = System.getenv("PUERTO");
-		obj = new ArrayList<ObjetoCompartido>();
 		fab_cerr = (FabricaCerrojos) Naming.lookup("//" +servidor+ ":" + puerto + "/DSM_cerrojos");
 		alm = (Almacen) Naming.lookup("//" + servidor + ":"+ puerto + "/DSM_almacen");
+		this.nom = nom;
 		lock = fab_cerr.iniciar(nom);
+		obj = new ArrayList<ObjetoCompartido>();
+
 	}
 
 	public void asociar(ObjetoCompartido o) {
 		obj.add(o);
 	}
 	public void desasociar(ObjetoCompartido o) {
-		obj.remove(o);
+		Iterator<ObjetoCompartido> i = obj.iterator();
+		ObjetoCompartido aux;
+		while(i.hasNext()){
+			aux = i.next();
+			if(aux.getCabecera().getNombre().equals(o.getCabecera().getNombre())){
+				i.remove();
+				return;
+			}
+		}
 	}
 	public boolean adquirir(boolean exc) throws RemoteException {
 
@@ -77,7 +89,8 @@ public class DSMCerrojo {
 				while(i.hasNext()){
 					aux1 = i.next();
 					if(aux.getCabecera().getNombre().equals(aux1.getCabecera().getNombre())) {
-						aux1 = aux;
+						aux1.setObjeto(aux.getObjeto());
+						aux1.setVersion(aux.getCabecera().getVersion());
 					}
 				}
 			}
