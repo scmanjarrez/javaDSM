@@ -9,24 +9,19 @@ import java.util.List;
 
 public class DSMCerrojo {
 
-	final String servidor;
-	final String puerto;
-	boolean exclusive;
-	ArrayList<ObjetoCompartido> obj;
+	private boolean exclusive;
+	private ArrayList<ObjetoCompartido> obj;
 	private Cerrojo lock;
 	private FabricaCerrojos fab_cerr;
 	private Almacen alm;
-	private String nom;
 	
 	public DSMCerrojo (String nom) throws RemoteException, MalformedURLException, NotBoundException {
-		servidor = System.getenv("SERVIDOR");
-		puerto = System.getenv("PUERTO");
+		String servidor = System.getenv("SERVIDOR");
+		String puerto = System.getenv("PUERTO");
 		fab_cerr = (FabricaCerrojos) Naming.lookup("//" +servidor+ ":" + puerto + "/DSM_cerrojos");
 		alm = (Almacen) Naming.lookup("//" + servidor + ":"+ puerto + "/DSM_almacen");
-		this.nom = nom;
 		lock = fab_cerr.iniciar(nom);
 		obj = new ArrayList<ObjetoCompartido>();
-
 	}
 
 	public void asociar(ObjetoCompartido o) {

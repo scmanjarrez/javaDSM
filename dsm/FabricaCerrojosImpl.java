@@ -1,7 +1,8 @@
 package dsm;
-import java.rmi.*;
-import java.rmi.server.*;
-import java.util.*;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 public class FabricaCerrojosImpl extends UnicastRemoteObject implements FabricaCerrojos {
 
@@ -21,15 +22,10 @@ public class FabricaCerrojosImpl extends UnicastRemoteObject implements FabricaC
 			}
 		}
 
-		CerrojoImpl newLock = new CerrojoImpl();
-		newLock.setIdCerrojo(s);
+		CerrojoImpl newLock = new CerrojoImpl(s);
 		fabrica.add(newLock);
 		return newLock;
 	}
-	
-//	public ArrayList<Cerrojo> getFabrica() {
-//		return fabrica;
-//	}
 
 }
 

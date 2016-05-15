@@ -10,7 +10,8 @@ class CerrojoImpl extends UnicastRemoteObject implements Cerrojo {
 	private int escritores;
 	private int lectores;
 
-	CerrojoImpl() throws RemoteException {
+	CerrojoImpl(String nom) throws RemoteException {
+		this.idCerrojo = nom;
 	}
 
 	public synchronized void adquirir(boolean exc) throws RemoteException {
@@ -37,20 +38,19 @@ class CerrojoImpl extends UnicastRemoteObject implements Cerrojo {
 			lectores++;
 			locked=true;
 		}
-		//System.out.println("estado actual de escrit=" + escritores + " y lect=" + lectores);
 	}
 
 	public synchronized boolean liberar() throws RemoteException {
 		if (!locked) {
 			return false;
 		} else {
-			if (escritores == 1) {// lectores==0?
+			if (escritores == 1) {
 				escritores = 0;
 				locked = false;
 				notifyAll();
 				return true;
 			}
-			if (lectores > 0) {//&&escritores == 0?
+			if (lectores > 0) {
 				lectores--;
 				if (lectores == 0) {
 					locked = false;
@@ -65,10 +65,6 @@ class CerrojoImpl extends UnicastRemoteObject implements Cerrojo {
 
 	public String getIdCerrojo() {
 		return idCerrojo;
-	}
-
-	public void setIdCerrojo(String idCerrojo) {
-		this.idCerrojo = idCerrojo;
 	}
 
 }
